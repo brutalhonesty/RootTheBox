@@ -1,0 +1,85 @@
+{% extends "../main.html" %}
+
+{% block title %}User Index{% end %}
+
+{% block header %}
+	<script type="text/javascript" src="/static/js/libs/pikachoose/jquery.jcarousel.min.js"></script>
+	<script type="text/javascript" src="/static/js/libs/pikachoose/jquery.pikachoose.js"></script>
+	<link type="text/css" rel="stylesheet" href="/static/css/team_css3.css" />
+	<link type="text/css" rel="stylesheet" href="/static/css/team_styles.css" />
+{% end %}
+
+{% block content %}
+	{% include ../notifier.html %}
+	<div class="row-fluid">
+		<div class="span5">
+			<div class="row">
+				<div class="span11 offset1 well">
+					<h3>Welcome {{ user.handle }}</h3>
+					{% if user.team is not None %}
+						<strong>Current Level:</strong> {{ user.team.levels[-1].number }} <br />
+						<strong>Bank Account:</strong> ${{ user.team.money }} <br />
+						{% from libs.EventManager import EventManager %}
+						<strong>Active Bots:</strong> {{ EventManager.Instance().bot_count(user.team) }} <br />
+						<strong>Flags Captured:</strong> {{ len(user.team.flags) }}<br />
+					{% else %}
+						<strong>You are not on a team</strong>
+					{% end %}
+				</div>
+				<div class="span11 offset1 well">
+					{% if user.team is not None %}
+	                    <h3 style="display: inline;">{{ user.team.name }}</h3>
+	                    <h4 style="display: inline;">&nbsp;&nbsp;&nbsp;&quot;{{ user.team.motto }}&quot;</h4>
+						<div class="pikachoose">
+							<ul id="pikame">
+								{% for teammate in user.team.members %}
+									<li>
+										<a href="#"><img src="/avatars/{{ teammate.avatar }}" alt="picture" /></a>
+										<span>{{ teammate.handle }}</span>
+									</li>
+								{% end %}
+							</ul>
+						</div>
+					{% else %}
+						<strong>You are not on a team</strong>
+					{% end %}
+				</div>
+			</div>
+		</div>
+		<div class="span5 offset1 well">
+			<h2 style="display:inline;">Notifications</h2>
+			<h4 style="display:inline;float:right;"><a href="/notifications/all">See All &raquo;</a></h4>
+			<hr>
+			{% from models import Notification %}
+			{% for notify in Notification.all()[-5:] %}
+				<div class="well">
+					{% if notify.icon_url is not None %}
+						<img 
+						src="/avatars/{{ notify.icon_url }}" />
+					{% elif notify.category == "success" %}
+						<img style="width:36px; height:36px; display:inline-block;" src="/static/images/success.png" />
+					{% elif notify.category == "info" %}
+						<img style="width:36; height:36; display:inline-block;verticalAlign:middle;" 
+						src="/static/images/info.png" />
+					{% elif notify.category == "warning" %}
+						<img style="width:36; height:36; display:inline-block;verticalAlign:middle;" 
+						src="/static/images/warning.png" />
+					{% elif notify.category == "error" %}
+						<img style="width:36; height:36; display:inline-block;verticalAlign:middle;" 
+						src="/static/images/error.png" />
+					{% end %}
+					<p style="display:inline;">
+						<strong>{{ notify.title }}</strong> {{ notify.created.strftime("%I:%M%p") }} <strong>:</strong>
+						<br />
+						{{ notify.message }}
+					</p>
+				</div>
+			{% end %}
+		</div>
+	</div>
+	<script>
+		$(document).ready(function() {
+			$("#pikame").PikaChoose();
+		});
+	</script>
+{% end %}

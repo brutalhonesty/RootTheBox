@@ -42,6 +42,8 @@ class HomeHandler(BaseHandler):
     def get(self, *args, **kwargs):
         ''' Display the default user page '''
         user = self.get_current_user()
+        if user.handle is 'God' or 'admin':
+            self.render('admin/home.html', user=user)
         self.render('user/home.html', user=user)
 
 

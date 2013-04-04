@@ -101,6 +101,7 @@ app = Application([
 
                   # User handlers - UserHandlers.py
                   (r'/user', HomeHandler),
+                  (r'/admin/home', HomeHandler),
                   (r'/user/settings(.*)', SettingsHandler),
 
                   # Admin Handlers - AdminHandlers.py

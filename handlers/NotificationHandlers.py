@@ -107,4 +107,7 @@ class AllNotificationsHandler(BaseHandler):
     @authenticated
     def get(self, *args, **kwargs):
         user = self.get_current_user()
+        logging.info('Username: %s' % user.handle)
+        if user.handle is 'God' or 'admin':
+            self.render("admin/notifications.html")
         self.render("notifications/view.html", user=user)
